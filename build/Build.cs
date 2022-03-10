@@ -185,7 +185,6 @@ partial class Build : NukeBuild
         .Description("Creates a GitHub release (or amends existing) and uploads the artifact")
         .OnlyWhenDynamic(() => !string.IsNullOrWhiteSpace(GitHubToken))
         .DependsOn(AuthenticatedGitHubClient)
-        .OnlyWhenDynamic(() => GitRepository.IsOnMainOrMasterBranch() || GitRepository.IsOnReleaseBranch())
         .Executes(async () =>
         {
             var version = ReleaseNotes.Version.ToString();
