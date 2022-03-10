@@ -206,6 +206,7 @@ partial class Build : NukeBuild
             {
                 var newRelease = new NewRelease(releaseName)
                 {
+                    Body = releaseNotes,
                     Name = releaseName,
                     Draft = false,
                     Prerelease = GitRepository.IsOnReleaseBranch()
