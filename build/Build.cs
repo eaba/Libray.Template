@@ -191,9 +191,9 @@ partial class Build : NukeBuild
             var version = ReleaseNotes.Version.ToString();
             var releaseNotes = GetNuGetReleaseNotes(ChangelogFile, GitRepository);
             Release release;
-            var releaseName = $"v{version}";
+            var releaseName = $"{version}";
             if(!VersionSuffix.IsNullOrWhiteSpace())
-                releaseName = $"v{version}-{VersionSuffix}";
+                releaseName = $"{version}-{VersionSuffix}";
             var identifier = GitRepository.Identifier.Split("/");
             Information($"Release Name: {releaseName}");
             Information($"Identifier: {identifier[0]}/{identifier[1]}");
