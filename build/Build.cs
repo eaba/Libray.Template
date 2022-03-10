@@ -24,6 +24,7 @@ using static Nuke.Common.Tools.SignClient.SignClientTasks;
 using Nuke.Common.Tools.SignClient;
 using static Nuke.Common.Tools.Git.GitTasks;
 using Octokit;
+using Nuke.Common.Utilities;
 
 [CheckBuildProjectConfigurations]
 [ShutdownDotNetAfterServerBuild]
@@ -190,7 +191,9 @@ partial class Build : NukeBuild
             var version = ReleaseNotes.Version.ToString();
             var releaseNotes = GetNuGetReleaseNotes(ChangelogFile, GitRepository);
             Release release;
-            var releaseName = $"v{version}-{VersionSuffix}";
+            var releaseName = $"v{version}";
+            if(!VersionSuffix.IsNullOrWhiteSpace())
+                releaseName = $"v{version}-{VersionSuffix}";
             var identifier = GitRepository.Identifier.Split("/");
             Information($"Release Name: {releaseName}");
             Information($"Identifier: {identifier[0]}/{identifier[1]}");
