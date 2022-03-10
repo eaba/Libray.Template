@@ -190,8 +190,10 @@ partial class Build : NukeBuild
             var version = ReleaseNotes.Version.ToString();
             var releaseNotes = GetNuGetReleaseNotes(ChangelogFile, GitRepository);
             Release release;
-            var releaseName = $"{version}-{VersionSuffix}";
+            var releaseName = $"v{version}-{VersionSuffix}";
             var identifier = GitRepository.Identifier.Split("/");
+            Information($"Release Name: {releaseName}");
+            Information($"Identifier: {identifier[0]}/{identifier[1]}");
             var (gitHubOwner, repoName) = (identifier[0], identifier[1]);
             try
             {
@@ -280,22 +282,6 @@ partial class Build : NukeBuild
         return SourceDirectory.GlobFiles("**/Dockerfile")// folders with Dockerfiles in it
             .ToArray();
     }
-    Target PublishCode => _ => _
-        .Unlisted()
-        .Description("Publish project as release")
-        .DependsOn(RunTests)
-        .Executes(() =>
-        {
-            var dockfiles = GetDockerProjects();
-            foreach (var dockfile in dockfiles)
-            {
-                Information(dockfile.Parent.ToString());
-                var project = dockfile.Parent.GlobFiles("*.csproj").First();
-                DotNetPublish(s => s
-                .SetProject(project)
-                .SetConfiguration(Configuration.Release));
-            }
-        });
     Target All => _ => _
      .Description("Executes NBench, Tests and Nuget targets/commands")
      .DependsOn(BuildRelease, RunTests, NBench, Nuget);
