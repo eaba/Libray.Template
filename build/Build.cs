@@ -145,7 +145,7 @@ partial class Build : NukeBuild
     .After(CreateNuget, SignClient)
     .OnlyWhenDynamic(() => !NugetPublishUrl.IsNullOrEmpty())
     .OnlyWhenDynamic(() => !NugetKey.IsNullOrEmpty())
-    .Triggers(GitHubRelease, PublishNugetOnGitHub)
+    .Triggers(GitHubRelease)
     .Executes(() =>
     {
         var packages = OutputNuget.GlobFiles("*.nupkg", "*.symbols.nupkg").NotNull();
@@ -223,25 +223,6 @@ partial class Build : NukeBuild
                 Information($"  {releaseAsset.BrowserDownloadUrl}");
             }
         });
-    Target PublishNugetOnGitHub => _ => _
-    .OnlyWhenDynamic(() => !GitHubToken.IsNullOrEmpty())
-    .OnlyWhenDynamic(() => GitRepository != null)
-    .Executes(() =>
-    {
-        
-        var packages = OutputNuget.GlobFiles("*.nupkg", "*.symbols.nupkg")
-        //.Where(x => !x.Name.EndsWith("symbols.nupkg"))
-        .NotNull();
-        foreach (var package in packages)
-        {
-            DotNetNuGetPush(s => s
-            .SetApiKey(GitHubToken)
-            .SetSymbolApiKey(GitHubToken)
-            .SetTargetPath(package)
-            .SetSource(GitRepository.ToString())
-            .SetSymbolSource(GitRepository.ToString()));
-        }
-    });
     Target RunTests => _ => _
         .Description("Runs all the unit tests")
         .DependsOn(Compile)
